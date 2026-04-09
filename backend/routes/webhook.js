@@ -66,7 +66,16 @@ router.post('/', async (req, res) => {
     return res.status(200).json({ message: `Event "${event}" ignored` });
   }
 
-  const payload = req.body;
+  // GitHub may send either application/json or application/x-www-form-urlencoded.
+  // In the urlencoded case the JSON payload is nested under req.body.payload.
+  let payload = req.body;
+  if (typeof payload?.payload === 'string') {
+    try {
+      payload = JSON.parse(payload.payload);
+    } catch {
+      return res.status(400).json({ error: 'Invalid JSON in urlencoded payload' });
+    }
+  }
   const repoFullName = payload?.repository?.full_name;
   const ref = payload?.ref; // e.g. "refs/heads/main"
   const commits = payload?.commits ?? [];

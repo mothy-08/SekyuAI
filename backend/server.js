@@ -11,6 +11,12 @@ app.use(express.json({
     req.rawBody = buf;
   },
 }));
+app.use(express.urlencoded({
+  extended: true,
+  verify: (req, _res, buf) => {
+    req.rawBody = buf;
+  },
+}));
 
 app.use('/api/watchlist', watchlistRouter);
 app.use('/webhook', webhookRouter);
