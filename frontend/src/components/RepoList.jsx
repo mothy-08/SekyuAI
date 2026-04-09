@@ -12,7 +12,7 @@ export default function RepoList({ repos, onRemove }) {
           <a
             href={`https://github.com/${repo}`}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="text-sm text-blue-600 hover:underline"
           >
             {repo}
