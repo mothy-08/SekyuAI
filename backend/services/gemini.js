@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from "@google/genai";
 
 export async function patchFile(filePath, rawCode) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -18,7 +18,7 @@ Code:
 ${rawCode}`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
+    model: "gemini-3-flash-preview",
     contents: prompt,
   });
 
@@ -27,12 +27,18 @@ ${rawCode}`;
   // Safely extract the first JSON object from the response
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
-    throw new Error(`Gemini returned an unparsable response for ${filePath}: ${text}`);
+    throw new Error(
+      `Gemini returned an unparsable response for ${filePath}: ${text}`,
+    );
   }
 
   const result = JSON.parse(jsonMatch[0]);
 
-  if (typeof result.isVulnerable !== 'boolean' || typeof result.patchedCode !== 'string' || typeof result.explanation !== 'string') {
+  if (
+    typeof result.isVulnerable !== "boolean" ||
+    typeof result.patchedCode !== "string" ||
+    typeof result.explanation !== "string"
+  ) {
     throw new Error(`Gemini response schema mismatch for ${filePath}`);
   }
 
